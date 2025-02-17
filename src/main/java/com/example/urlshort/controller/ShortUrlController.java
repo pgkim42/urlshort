@@ -23,6 +23,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ShortUrlController {
+    private String baseUrl;
 
     private final ShortUrlService shortUrlService;
     private static final Logger logger = LoggerFactory.getLogger(ShortUrlController.class);
@@ -36,7 +37,7 @@ public class ShortUrlController {
         }
 
         ShortUrl shortUrl = shortUrlService.shortenUrl(originalUrl);
-        String shortUrlResponse = "http://localhost:8080/api/" + shortUrl.getId();
+        String shortUrlResponse = baseUrl + "/api/" + shortUrl.getId();
         return ResponseEntity.ok(shortUrlResponse);
     }
 
