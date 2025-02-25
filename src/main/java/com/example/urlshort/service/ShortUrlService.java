@@ -96,6 +96,7 @@ public class ShortUrlService {
                     urlInfo.put("originalUrl", shortUrl.getOriginalUrl());
                     urlInfo.put("shortUrl", shortUrl.getId());
                     urlInfo.put("clickCount", shortUrl.getClickCount());
+                    urlInfo.put("createdAt", shortUrl.getCreatedAt());
                     return urlInfo;
                 })
                 .collect(Collectors.toList());
