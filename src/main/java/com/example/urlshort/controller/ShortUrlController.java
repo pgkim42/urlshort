@@ -14,9 +14,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -31,14 +32,20 @@ public class ShortUrlController {
     @PostMapping("/shorten")
     public ResponseEntity<String> shortenUrl(@RequestBody ShortenRequest request) {
         String originalUrl = request.getUrl();
+        String customUrl = request.getCustomUrl();
 
         if (originalUrl == null || originalUrl.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid URL");
         }
 
-        ShortUrl shortUrl = shortUrlService.shortenUrl(originalUrl);
-        String shortUrlResponse = baseUrl + "/api/" + shortUrl.getId();
-        return ResponseEntity.ok(shortUrlResponse);
+        ShortUrl shortUrl;
+        try {
+            shortUrl = shortUrlService.shortenUrl(originalUrl, customUrl);
+            String shortUrlResponse = baseUrl + "/api/" + shortUrl.getId();
+            return ResponseEntity.ok(shortUrlResponse);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     /**
@@ -86,6 +93,15 @@ public class ShortUrlController {
         }
     }
 
+    @GetMapping("/clickCounts")
+    public ResponseEntity<List<Integer>> getAllClickCounts() {
+        List<Integer> clickCounts = shortUrlService.getAllClickCounts();
+        return ResponseEntity.ok(clickCounts);
+    }
 
-
+   @GetMapping("/info")
+   public ResponseEntity<List<Map<String, Object>>> getAllUrlInfo() {
+       List<Map<String, Object>> urlInfoList = shortUrlService.getAllUrlInfo();
+       return ResponseEntity.ok(urlInfoList);
+   }
 }
